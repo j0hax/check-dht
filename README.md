@@ -11,7 +11,7 @@ This software has two dependencies:
 
 Both should be available for installation from your distribution's package manager and `pip`.
 
-### openSUSE quick start
+### openSUSE Quick Start
 Following commands install dependencies, copy the script to Nagios' plugins and set it as executable:
 
 ```console
@@ -20,8 +20,16 @@ $ cp check_dht.py /usr/lib/nagios/plugins/check_dht
 $ chmod +x /usr/lib/nagios/plugins/check_dht
 ```
 
-## Help Overview
+## Overview
+### Example output with default parameters
 ```console
+$ ./check_dht
+DHT OK - 24.2 °C | error=0 humidity=34.9;40;50;0;100 temperature=24.2;30;40;-40;80
+```
+
+### Usage
+```console
+$ ./check_dht -h
 usage: check_dht [-h] [-p PORT] [-b BAUD] [-w TEMP] [-c TEMP]
                  [--humidity-warning PERCENT] [--humidity-critical PERCENT]
 
