@@ -1,39 +1,9 @@
 #!/usr/bin/env python3
-import serial
-import json
 import argparse
+import sys
 import nagiosplugin
-
-from dht_error import DeviceReportsError
-
-
-def read_data(port, baud):
-    ser = serial.Serial(port, baud)
-    line = ser.readline()
-    return json.loads(line)
-
-
-class DHT(nagiosplugin.Resource):
-    """Domain model: digital temperature and humidity."""
-
-    def __init__(self, port, baud):
-        self.port = port
-        self.baud = baud
-
-    def probe(self):
-        data = read_data(self.port, self.baud)
-
-        # Check the error
-        if data["error"] != 0:
-            raise DeviceReportsError(data["error"])
-
-        return [
-            nagiosplugin.Metric("temperature", data["temperature"], uom="°C"),
-            nagiosplugin.Metric(
-                "onboard", data["onboard"], uom="°C", context="temperature"
-            ),
-            nagiosplugin.Metric("humidity", data["humidity"], uom="%", min=0, max=100),
-        ]
+import logging
+from dht import DHT
 
 
 def main():
@@ -97,8 +67,9 @@ def main():
 
     try:
         check.main()
-    except DeviceReportsError as dre:
-        print(dre)
+    except Exception as e:
+        logging.exception(e)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
