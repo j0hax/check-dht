@@ -4,13 +4,9 @@ import nagiosplugin
 import errno
 
 
-def read_data(port, baud):
-    ser = serial.Serial(port, baud)
-    line = ser.readline()
-    return json.loads(line)
-
-
 class DeviceReportsError(Exception):
+    """Error class used to report issues coming from the Pico itself when communication works"""
+
     def __init__(self, errno):
         self.code = errno
 
@@ -20,18 +16,24 @@ class DeviceReportsError(Exception):
 
 
 class DHT(nagiosplugin.Resource):
-    """Domain model: digital temperature and humidity."""
+    """Domain model: digital humidity and temperature."""
 
     def __init__(self, port, baud):
-        self.port = port
-        self.baud = baud
+        self.serial = serial.Serial(port, baud)
 
-    def probe(self):
-        data = read_data(self.port, self.baud)
+    def read_data(self):
+        """Reads one line of data via serial and parses it as JSON"""
+        line = self.serial.readline()
+        data = json.loads(line)
 
-        # Check the error
+        # Check for errors: if there is an error, the data may be unreliable!
         if data["error"] != 0:
             raise DeviceReportsError(data["error"])
+
+        return data
+
+    def probe(self):
+        data = self.read_data()
 
         return [
             nagiosplugin.Metric("temperature", data["temperature"], uom="°C"),
