@@ -21,9 +21,9 @@ class DHT(nagiosplugin.Resource):
     def probe(self):
         data = read_data(self.port, self.baud)
         return [
-            nagiosplugin.Metric("temperature", data["temperature"], min=-40, max=80),
-            nagiosplugin.Metric("humidity", data["humidity"], min=0, max=100),
-            nagiosplugin.Metric("error", data["error"], context="default"),
+            nagiosplugin.Metric(
+                "onboard", data["onboard"], uom="°C", context="temperature"
+            ),
         ]
 
 
