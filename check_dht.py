@@ -4,6 +4,8 @@ import json
 import argparse
 import nagiosplugin
 
+from dht_error import DeviceReportsError
+
 
 def read_data(port, baud):
     ser = serial.Serial(port, baud)
@@ -20,6 +22,9 @@ class DHT(nagiosplugin.Resource):
 
     def probe(self):
         data = read_data(self.port, self.baud)
+        # Check the error
+        if data["error"] != 0:
+            raise DeviceReportsError(data["error"])
         return [
             nagiosplugin.Metric(
                 "onboard", data["onboard"], uom="°C", context="temperature"
@@ -89,7 +94,10 @@ def main():
         ),
     )
 
-    check.main()
+    try:
+        check.main()
+    except DeviceReportsError as dre:
+        print(dre)
 
 
 if __name__ == "__main__":
