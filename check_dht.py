@@ -22,13 +22,17 @@ class DHT(nagiosplugin.Resource):
 
     def probe(self):
         data = read_data(self.port, self.baud)
+
         # Check the error
         if data["error"] != 0:
             raise DeviceReportsError(data["error"])
+
         return [
+            nagiosplugin.Metric("temperature", data["temperature"], uom="°C"),
             nagiosplugin.Metric(
                 "onboard", data["onboard"], uom="°C", context="temperature"
             ),
+            nagiosplugin.Metric("humidity", data["humidity"], uom="%", min=0, max=100),
         ]
 
 
@@ -68,14 +72,14 @@ def main():
     parser.add_argument(
         "--humidity-warning",
         metavar="PERCENT",
-        default=40,
+        default=60,
         help="return warning if humidity is outside PERCENT",
     )
 
     parser.add_argument(
         "--humidity-critical",
         metavar="PERCENT",
-        default=50,
+        default=65,
         help="return critical if humidity is outside PERCENT",
     )
 
@@ -83,14 +87,11 @@ def main():
 
     check = nagiosplugin.Check(
         DHT(args.port, args.baud),
-        nagiosplugin.ScalarContext(
-            "temperature", args.warning, args.critical, fmt_metric="{value} °C"
-        ),
+        nagiosplugin.ScalarContext("temperature", args.warning, args.critical),
         nagiosplugin.ScalarContext(
             "humidity",
             args.humidity_warning,
             args.humidity_critical,
-            fmt_metric="{value}%",
         ),
     )
 
