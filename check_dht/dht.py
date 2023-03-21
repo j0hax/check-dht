@@ -18,6 +18,7 @@ class DeviceReportsError(Exception):
         message = errno.errorcode[self.code]
         return f"Connection to Raspberry Pi successful, but device reports error {self.code} ({message})\nPlease ensure all header pins are securely connected!"
 
+
 class DHT(nagiosplugin.Resource):
     """Domain model: digital temperature and humidity."""
 
