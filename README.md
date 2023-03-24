@@ -1,4 +1,8 @@
 # check-dht
+![PyPI](https://img.shields.io/pypi/v/check_dht)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/check-dht)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/check_dht)
+
 Nagios plugin to monitor humidity and temperature data from a Raspberry Pi Pico
 
 ```console
