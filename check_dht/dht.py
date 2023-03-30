@@ -36,9 +36,7 @@ class DHT(nagiosplugin.Resource):
         data = self.read_data()
 
         return [
-            nagiosplugin.Metric("temperature", data["temperature"], uom="C"),
-            nagiosplugin.Metric(
-                "onboard", data["onboard"], uom="C", context="temperature"
-            ),
+            nagiosplugin.Metric("temperature", data["temperature"]),
+            nagiosplugin.Metric("onboard", data["onboard"], context="temperature"),
             nagiosplugin.Metric("humidity", data["humidity"], uom="%"),
         ]

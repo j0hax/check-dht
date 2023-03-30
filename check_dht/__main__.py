@@ -57,11 +57,16 @@ def main():
 
     check = nagiosplugin.Check(
         DHT(args.port, args.baud),
-        nagiosplugin.ScalarContext("temperature", args.warning, args.critical),
         nagiosplugin.ScalarContext(
-            "humidity",
-            args.humidity_warning,
-            args.humidity_critical,
+            name="temperature",
+            fmt_metric="{valueunit}°C",
+            warning=args.warning,
+            critical=args.critical,
+        ),
+        nagiosplugin.ScalarContext(
+            name="humidity",
+            warning=args.humidity_warning,
+            critical=args.humidity_critical,
         ),
     )
 
